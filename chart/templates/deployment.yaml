@@ -23,9 +23,9 @@ spec:
           image: {{ .Values.image }}
           env:
             - name: MONGODB_PASSWORD
-              value: mongodb123
+              value: mongodb123root
             - name: MONGODB_USERNAME
-              value: okteto
+              value: root
             - name: MONGODB_DATABASE
               value: okteto
             - name: MONGODB_HOST
