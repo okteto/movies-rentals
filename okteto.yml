@@ -6,9 +6,7 @@ build:
 
 deploy:
   commands:
-    - helm repo add bitnami https://charts.bitnami.com/bitnami || true
-    - helm repo update
-    - helm upgrade --install mongodb-rentals bitnami/mongodb -f mongodb-values.yaml
+    - kubectl apply -f mongodb-deployment.yaml
     - helm upgrade --install rentals chart --set image=${OKTETO_BUILD_RENTALS_IMAGE}
   divert:
     namespace: staging

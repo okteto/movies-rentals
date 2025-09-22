@@ -29,7 +29,7 @@ spec:
             - name: MONGODB_DATABASE
               value: okteto
             - name: MONGODB_HOST
-              value: mongodb-rentals
+              value: mongodb-rentals-svc
           ports:
             - name: http
               containerPort: 8080
