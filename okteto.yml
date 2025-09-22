@@ -6,8 +6,6 @@ build:
 
 deploy:
   commands:
-    - helm repo add mongodb https://mongodb.github.io/helm-charts || true
-    - helm repo update
     - helm upgrade --install rentals chart --set image=${OKTETO_BUILD_RENTALS_IMAGE}
   divert:
     namespace: staging
