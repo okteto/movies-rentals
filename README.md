@@ -5,4 +5,3 @@
 ![Partial dev environment](images/partial.png)
 
 ![Divert](images/divert.png)
-

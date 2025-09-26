@@ -1,6 +1,6 @@
 const { json } = require('express');
 const express = require('express');
-const mongo = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 const http = require('http');
 
 const app = express();
@@ -34,15 +34,13 @@ async function getCatalog() {
 }
 
 async function getRentals(db) {
-  return new Promise(done => {
-    db.collection('rentals').find().toArray(async (error, rentals) => {
-      if (error) {
-        console.error(`Failed to query rentals: ${error}`)
-        done([]);
-      }
-      done(rentals);
-    });
-  });
+  try {
+    const rentals = await db.collection('rentals').find().toArray();
+    return rentals;
+  } catch (error) {
+    console.error(`Failed to query rentals: ${error}`);
+    return [];
+  }
 }
 
 async function getExpandedRentals(db) {
@@ -62,24 +60,21 @@ async function getExpandedRentals(db) {
   return extended;
 }
 
-function startWithRetry() {
-  mongo.connect(url, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    connectTimeoutMS: 1000,
-    socketTimeoutMS: 1000,
-  }, (err, client) => {
-    if (err) {
-      console.error(`Error connecting, retrying in 1 sec: ${err}`);
-      setTimeout(startWithRetry, 1000);
-      return;
-    }
+async function startWithRetry() {
+  try {
+    const client = new MongoClient(url, {
+      connectTimeoutMS: 1000,
+      socketTimeoutMS: 1000,
+    });
+
+    await client.connect();
+    console.log('Connected to MongoDB');
 
     const db = client.db(process.env.MONGODB_DATABASE);
 
     app.listen(8080, () => {
       app.get('/rentals/healthz', (_, res) => {
-        res.sendStatus(200)
+        res.sendStatus(200);
         return;
       });
 
@@ -114,7 +109,10 @@ function startWithRetry() {
 
       console.log('Server running on port 8080.');
     });
-  });
-};
+  } catch (err) {
+    console.error(`Error connecting, retrying in 1 sec: ${err}`);
+    setTimeout(startWithRetry, 1000);
+  }
+}
 
 startWithRetry();
