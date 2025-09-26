@@ -5,8 +5,8 @@ build:
     context: .
 
 deploy:
-  compose: docker-compose.yml
   commands:
+    - okteto deploy -f docker-compose.yml
     - helm upgrade --install rentals chart --set image=${OKTETO_BUILD_RENTALS_IMAGE}
   divert:
     namespace: staging
